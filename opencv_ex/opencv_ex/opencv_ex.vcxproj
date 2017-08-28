@@ -22,7 +22,7 @@
     <ResourceCompile Include="opencv_ex.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="template.cpp" />
+    <ClCompile Include="t2.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

@@ -16,38 +16,43 @@ using namespace std;
 
 int main(int, char)
 {
-	Mat srcImage = imread("img\\test_1.png");
+	VideoCapture capture("img\\1.mp4");
+	Mat frame;
+
+	int askFileTypeBox = 0;
+	int Color = 1;
+	Size S = Size((int)capture.get(CV_CAP_PROP_FRAME_WIDTH), (int)capture.get(CV_CAP_PROP_FRAME_HEIGHT));
+
+
+
+
+	Mat srcImage = imread("img\\test_1.png", 0);
 
 	if (srcImage.empty())
 		return -1;
 
-	Mat tImage1 = imread("img\\right_resize.png");
-	Mat tImage2 = imread("img\\left_resize.png");
+	Mat tImage1 = imread("img\\right_resize.png", 0);
+	Mat tImage2 = imread("img\\left_resize.png", 0);
 
 	imshow("tImage1", tImage1);
 	imshow("tImage2", tImage2);
 
 
 
-	Mat dstImage = srcImage;
-	//cvtColor(srcImage, dstImage, COLOR_GRAY2BGR);
+	Mat dstImage;
+	cvtColor(srcImage, dstImage, COLOR_GRAY2BGR);
 
 	double minVal, maxVal;
 	Point minLoc, maxLoc;
 	Mat result;
-	
+
 	//*
 	// 제곱차 매칭 방법(TM_SQDIFF)
 	matchTemplate(srcImage, tImage1, result, TM_SQDIFF);
 	minMaxLoc(result, &minVal, NULL, &minLoc, NULL);
-	rectangle(dstImage, minLoc,Point(minLoc.x + tImage1.cols, minLoc.y + tImage1.rows), Scalar(255, 0, 0), 2); //파랑색 사각형
-	putText(dstImage, "right", Point(minLoc.x + tImage1.cols, minLoc.y + tImage1.rows), CV_FONT_NORMAL, 1, Scalar(0, 0, 0), 1, 1);
-	/*
 	rectangle(dstImage, minLoc, Point(minLoc.x + tImage1.cols, minLoc.y + tImage1.rows), Scalar(255, 0, 0), 2); //파랑색 사각형
 	putText(dstImage, "right", Point(minLoc.x + tImage1.cols, minLoc.y + tImage1.rows), CV_FONT_NORMAL, 1, Scalar(0, 0, 0), 1, 1);
-	*/
 
-	
 
 	// 정규화된 상관계수 방법(TM_CCOEFF_NORMED)
 	matchTemplate(srcImage, tImage2, result, TM_CCOEFF_NORMED);
@@ -55,13 +60,36 @@ int main(int, char)
 	rectangle(dstImage, maxLoc, Point(maxLoc.x + tImage2.cols + 10, maxLoc.y + tImage2.rows + 10), Scalar(255, 0, 255), 2); //자주색 사각형
 	putText(dstImage, "left", Point(maxLoc.x + tImage2.cols - 130, maxLoc.y + tImage2.rows), CV_FONT_NORMAL, 1, Scalar(0, 0, 0), 1, 1);
 
-	/*
-	rectangle(dstImage, maxLoc, Point(maxLoc.x + tImage2.cols+10, maxLoc.y + tImage2.rows+10), Scalar(255, 0, 255), 2); //자주색 사각형
-	putText(dstImage, "left", Point(maxLoc.x + tImage2.cols-130, maxLoc.y + tImage2.rows), CV_FONT_NORMAL, 1, Scalar(0, 0, 0), 1, 1);
-	*/
-
 
 	imshow("dstImage", dstImage);
+
+	while (1)
+	{
+		capture >> frame;
+		if (frame.empty())
+			break;
+
+		//outVideo << frame;
+		imshow("w", frame);
+
+		// 제곱차 매칭 방법(TM_SQDIFF)
+		matchTemplate(srcImage, tImage1, result, TM_SQDIFF);
+		minMaxLoc(result, &minVal, NULL, &minLoc, NULL);
+		rectangle(dstImage, minLoc, Point(minLoc.x + tImage1.cols, minLoc.y + tImage1.rows), Scalar(255, 0, 0), 2); //파랑색 사각형
+		putText(dstImage, "right", Point(minLoc.x + tImage1.cols, minLoc.y + tImage1.rows), CV_FONT_NORMAL, 1, Scalar(0, 0, 0), 1, 1);
+
+
+		// 정규화된 상관계수 방법(TM_CCOEFF_NORMED)
+		matchTemplate(srcImage, tImage2, result, TM_CCOEFF_NORMED);
+		minMaxLoc(result, NULL, &maxVal, NULL, &maxLoc);
+		rectangle(dstImage, maxLoc, Point(maxLoc.x + tImage2.cols + 10, maxLoc.y + tImage2.rows + 10), Scalar(255, 0, 255), 2); //자주색 사각형
+		putText(dstImage, "left", Point(maxLoc.x + tImage2.cols - 130, maxLoc.y + tImage2.rows), CV_FONT_NORMAL, 1, Scalar(0, 0, 0), 1, 1);
+
+		if (waitKey(0) == 0 && !waitKey(0) ==255 )
+			break;
+
+
+	}
 	waitKey(0);
 	return 0;
 

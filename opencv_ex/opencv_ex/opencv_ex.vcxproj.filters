@@ -20,7 +20,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="template.cpp">
+    <ClCompile Include="t2.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
